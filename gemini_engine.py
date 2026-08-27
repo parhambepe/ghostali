@@ -18,6 +18,12 @@ except Exception:  # pragma: no cover - telethon always present in prod, guard a
             return 5
 
 
+# Error fingerprints that mean "this MODEL is the problem, not the key".
+_QUOTA_MARKERS = ("429", "RESOURCE_EXHAUSTED", "quota", "rate limit", "RATE_LIMIT")
+_BAD_MODEL_MARKERS = ("404", "NOT_FOUND", "is not found", "not supported", "unsupported",
+                      "does not exist", "is not available")
+
+
 class GeminiEngine:
     # Retry policy: after ALL keys fail, retry the whole cycle at most this many times.
     MAX_GLOBAL_RETRIES = 3
@@ -30,6 +36,12 @@ class GeminiEngine:
         self._clients = {}
         self._client_lock = threading.Lock()
         self.model = Config.MODEL_NAME
+        # 🧠 Multi-model rotation: every model in GEMINI_MODELS carries its own
+        # RPM/RPD budget (tracked by api_tracker). When one is exhausted or rate
+        # limited we simply continue with the next one.
+        self.models = list(Config.MODEL_NAMES) or [self.model]
+        if len(self.models) > 1:
+            print(f"🧠 Model rotation enabled: {', '.join(self.models)}")
         # 🔎 Web-search fallback model: the `google_search` grounding tool is NOT
         # supported on *-flash-lite models. When use_search=True we temporarily
         # route the call through this search-capable model, then return to self.model.
@@ -77,6 +89,25 @@ class GeminiEngine:
         control_char_re = re.compile(r'[\x00-\x08\x0b\x0c\x0e-\x1f\x7f-\x9f]')
         return control_char_re.sub('', text or "")
 
+    @staticmethod
+    def _with_owner_profile(system_prompt: str) -> str:
+        """Append the owner identity notes to conversational system prompts.
+
+        Returns the prompt untouched when no OWNER_* variables are configured,
+        so behaviour stays identical to before for existing deployments.
+        """
+        try:
+            block = Config.owner_profile_block()
+        except Exception:
+            return system_prompt
+        if not block:
+            return system_prompt
+        if not system_prompt:
+            return block
+        if block in system_prompt:  # never inject twice
+            return system_prompt
+        return f"{system_prompt}\n\n{block}"
+
     def _clean_output(self, raw_text: str) -> str:
         """Removes AI giveaways: emojis, HTML, formatting, diacritics."""
         emoji_pattern = re.compile(
@@ -96,17 +127,25 @@ class GeminiEngine:
                            parts=None, use_search: bool = False) -> str:
         """
         Asynchronously fetches a response using Round-Robin key management,
-        a hard per-attempt timeout and a FINITE global retry cap.
+        per-model quota rotation, a hard per-attempt timeout and a FINITE global
+        retry cap.
 
         - `parts`: optional list of google.genai types.Part (e.g. images/audio) appended to the prompt.
         - `use_search`: enables Google Search grounding for real-time information
           (gets a longer timeout via SEARCH_TIMEOUT — grounded calls are slow).
         """
+        from api_tracker import api_tracker
+
         # ==========================================
         # 🛡️ PRE-FLIGHT SAFETY SANITIZER
         # ==========================================
         safe_user_msg = self._sanitize(user_message or "")
         safe_sys_prompt = self._sanitize(system_prompt or "")
+
+        # 👤 Owner identity profile: only for real conversations, never for the
+        # internal JSON tasks (memory compression, auto-engage decisions, ...).
+        if not is_json:
+            safe_sys_prompt = self._with_owner_profile(safe_sys_prompt)
 
         timeout = Config.SEARCH_TIMEOUT if use_search else Config.GEMINI_TIMEOUT
 
@@ -153,18 +192,21 @@ class GeminiEngine:
             if self._queue_lock is None:
                 self._queue_lock = asyncio.Lock()
 
-            # 🔎 Build candidate model list (web-search needs a search-capable model)
+            # 🧠 Build the candidate model list.
             if use_search:
+                # Web search needs a grounding-capable model, so quotas take a back seat.
                 raw_candidates = [self.search_model, "gemini-2.0-flash", "gemini-2.5-flash-lite"]
-                seen = set()
-                model_candidates = []
-                for m in raw_candidates:
-                    if m and m not in seen:
-                        seen.add(m)
-                        model_candidates.append(m)
-                if not model_candidates:
-                    model_candidates = [self.model]
             else:
+                # Quota-aware rotation across every model in GEMINI_MODELS.
+                raw_candidates = api_tracker.get_model_order()
+
+            seen = set()
+            model_candidates = []
+            for m in raw_candidates:
+                if m and m not in seen:
+                    seen.add(m)
+                    model_candidates.append(m)
+            if not model_candidates:
                 model_candidates = [self.model]
 
             # Global Queue: Process AI requests strictly one by one
@@ -173,8 +215,17 @@ class GeminiEngine:
                 last_err = None
                 tried_models = []
 
-                for current_model in model_candidates:
+                for model_position, current_model in enumerate(model_candidates):
+                    # Skip a model that is over its own RPM/RPD budget, unless it is
+                    # the very last option we have left.
+                    is_last_option = model_position == len(model_candidates) - 1
+                    if not use_search and not is_last_option and not api_tracker.is_model_available(current_model):
+                        print(f"⏩ Skipping {current_model} (quota/cooldown). Trying next model...")
+                        continue
+
                     tried_models.append(current_model)
+                    model_blocked = False
+
                     # 🔒 FINITE retry: MAX_GLOBAL_RETRIES full-cycles instead of infinite loop
                     for global_attempt in range(1, self.MAX_GLOBAL_RETRIES + 1):
                         for attempt in range(num_keys):
@@ -187,9 +238,9 @@ class GeminiEngine:
                             client = self._client(api_key)
 
                             try:
-                                # Increment usage counter right before making the API call
-                                from api_tracker import api_tracker
+                                # Increment usage counters right before making the API call
                                 api_tracker.record_usage(api_key)
+                                api_tracker.record_model_usage(current_model)
 
                                 # Hard Timeout (longer for web-search grounded calls)
                                 resp = await asyncio.wait_for(
@@ -205,14 +256,12 @@ class GeminiEngine:
                                 break  # Success! Exit the round-robin loop
 
                             except asyncio.TimeoutError:
-                                from api_tracker import api_tracker
                                 api_tracker.record_error(api_key)
                                 last_err = Exception(f"{timeout}s strict timeout reached")
                                 self._last_error = last_err
                                 print(f"⚠️ Key timeout ({timeout}s). Moving to next key in cycle...")
                                 continue
                             except FloodWaitError as e:
-                                from api_tracker import api_tracker
                                 api_tracker.record_error(api_key)
                                 last_err = e
                                 self._last_error = e
@@ -224,19 +273,33 @@ class GeminiEngine:
                                 last_err = e
                                 self._last_error = e
                                 err_str = str(e)
+
                                 # 400 INVALID_ARGUMENT on media (e.g. undecodable image) will never
                                 # succeed by retrying the same payload — fail fast instead of
                                 # burning retries and tripping the circuit breaker.
                                 if "400 INVALID_ARGUMENT" in err_str or ("INVALID_ARGUMENT" in err_str and "Unable to process input image" in err_str):
                                     print(f"🚫 Permanent input error (bad/undecodable media). Dropping request: {err_str[:160]}")
                                     return Text.ERROR
-                                from api_tracker import api_tracker
+
+                                # 🧠 Model-level failures: the key is fine, the MODEL is not.
+                                # Cool it down and jump straight to the next model.
+                                if any(marker in err_str for marker in _BAD_MODEL_MARKERS):
+                                    api_tracker.cooldown_model(current_model, 6 * 3600, "model unavailable/unsupported")
+                                    model_blocked = True
+                                    print(f"🚫 Model {current_model} rejected the request. Switching model: {err_str[:160]}")
+                                    break
+                                if any(marker in err_str for marker in _QUOTA_MARKERS):
+                                    api_tracker.cooldown_model(current_model, 300, "quota / rate limit")
+                                    model_blocked = True
+                                    print(f"📉 Model {current_model} hit a quota limit. Switching model: {err_str[:160]}")
+                                    break
+
                                 api_tracker.record_error(api_key)
                                 print(f"⚠️ Key/Network Error ({type(e).__name__}). Moving to next key in cycle: {e}")
                                 continue
 
-                        if resp is not None:
-                            break  # Successfully got a response, exit retry loop
+                        if resp is not None or model_blocked:
+                            break  # got a response, or this model must be abandoned
 
                         # All keys failed this cycle → bounded backoff (no infinite loop!)
                         if global_attempt < self.MAX_GLOBAL_RETRIES:
@@ -252,7 +315,7 @@ class GeminiEngine:
                 if resp is None:
                     self._last_error = last_err
                     self._tried_models = tried_models
-                    print(f"🚫 Web search failed on ALL models {tried_models}. Last error: {last_err}")
+                    print(f"🚫 Request failed on ALL models {tried_models}. Last error: {last_err}")
                     return Text.ERROR
 
                 raw_text = (resp.text or "").strip()
