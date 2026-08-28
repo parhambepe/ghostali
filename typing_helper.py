@@ -16,23 +16,37 @@ def _float_env(name: str, default: float) -> float:
         return default
 
 
+def _bool_env(name: str, default: bool = True) -> bool:
+    raw = os.getenv(name)
+    if raw is None or not str(raw).strip():
+        return default
+    return str(raw).strip().lower() not in ("0", "false", "no", "off")
+
+
 # --- Humanized typing tuning -------------------------------------------------
 # The old defaults (MIN 1.5s / MAX 7.0s) made long replies obviously robotic:
 # no human types a 400-character Farsi paragraph in 7 seconds. These knobs are
 # read independently so the humanized behaviour works without touching config.py,
 # while still honouring explicit overrides in .env.
 #
-#   HUMAN_MIN_TYPING_DELAY   floor for the typing indicator (seconds)
-#   HUMAN_MAX_TYPING_DELAY   ceiling for the typing indicator (seconds)
-#   HUMAN_TYPING_CPS_SCALE   global speed multiplier (>1 = faster typist)
-#   HUMAN_READ_DELAY_MAX     max pause before typing starts (seconds)
-#   HUMAN_THINK_PAUSE_CHANCE probability of a mid-typing pause (0..1)
+#   HUMAN_MIN_TYPING_DELAY      floor for the typing indicator (seconds)
+#   HUMAN_MAX_TYPING_DELAY      ceiling for the typing indicator (seconds)
+#   HUMAN_TYPING_CPS_SCALE      global speed multiplier (>1 = faster typist)
+#   HUMAN_READ_DELAY_MAX        max pause before typing starts (seconds)
+#   HUMAN_THINK_PAUSE_CHANCE    probability of a mid-typing pause (0..1)
+#   HUMAN_SEGMENT_MESSAGES      split long replies into several bubbles (1/0)
+#   HUMAN_SEGMENT_THRESHOLD     only split replies longer than this many chars
+#   HUMAN_SEGMENT_MAX_DELAY     max typing time per extra bubble (seconds)
 
 MIN_TYPING_DELAY = _float_env("HUMAN_MIN_TYPING_DELAY", 1.2)
 MAX_TYPING_DELAY = _float_env("HUMAN_MAX_TYPING_DELAY", 45.0)
 TYPING_CPS_SCALE = max(0.2, _float_env("HUMAN_TYPING_CPS_SCALE", 1.0))
 READ_DELAY_MAX = _float_env("HUMAN_READ_DELAY_MAX", 9.0)
 THINK_PAUSE_CHANCE = _float_env("HUMAN_THINK_PAUSE_CHANCE", 0.18)
+
+SEGMENT_MESSAGES = _bool_env("HUMAN_SEGMENT_MESSAGES", True)
+SEGMENT_THRESHOLD = int(_float_env("HUMAN_SEGMENT_THRESHOLD", 180))
+SEGMENT_MAX_DELAY = _float_env("HUMAN_SEGMENT_MAX_DELAY", 12.0)
 
 
 def _base_cps(length: int) -> float:
@@ -190,3 +204,107 @@ def ContinuousTyping(client, input_chat_or_id):
     auto-cancellations and heartbeats.
     """
     return client.action(input_chat_or_id, "typing")
+
+
+# --- Humanized delivery ------------------------------------------------------
+# A single 400-character bubble is a robot tell no matter how long the typing
+# indicator stayed on. Real people send 2-3 shorter messages, with the typing
+# indicator going off and on between them.
+#
+# Instead of touching every send site, we wrap Telethon's send_message once at
+# import time. Every existing `client.send_message(chat, text)` call keeps
+# working unchanged and automatically becomes multi-bubble when the text is
+# long. Set HUMAN_SEGMENT_MESSAGES=0 to restore single-bubble behaviour.
+
+_ORIGINAL_SEND_MESSAGE = None
+
+
+def _should_segment(message) -> bool:
+    if not isinstance(message, str):
+        return False
+    text = message.strip()
+    if len(text) <= SEGMENT_THRESHOLD:
+        return False
+    # Never break code blocks or the sticker marker protocol.
+    if "```" in text or text == "[\u0627\u0633\u062a\u06cc\u06a9\u0631]":
+        return False
+    return True
+
+
+async def _inter_segment_pause(client, entity, segment: str) -> None:
+    """Typing off for a beat (message just landed), then typing on again."""
+    await asyncio.sleep(random.uniform(0.6, 1.8))
+
+    typing_time = min(calculate_human_typing_delay(segment), SEGMENT_MAX_DELAY)
+
+    # Occasional thinking pause: indicator drops out mid-way, like a real person.
+    if typing_time > 6.0 and random.random() < THINK_PAUSE_CHANCE:
+        first = typing_time * random.uniform(0.4, 0.6)
+        try:
+            async with client.action(entity, "typing"):
+                await asyncio.sleep(first)
+        except Exception:
+            await asyncio.sleep(first)
+        await asyncio.sleep(random.uniform(1.0, 2.5))
+        typing_time = max(0.0, typing_time - first)
+
+    try:
+        async with client.action(entity, "typing"):
+            await asyncio.sleep(typing_time)
+    except Exception:
+        await asyncio.sleep(typing_time)
+
+
+def install_humanized_sending(force: bool = False) -> bool:
+    """Patch TelegramClient.send_message so long texts arrive as several bubbles.
+
+    Idempotent and fail-safe: if Telethon is unavailable or anything goes wrong,
+    the original behaviour is kept.
+    """
+    global _ORIGINAL_SEND_MESSAGE
+
+    if _ORIGINAL_SEND_MESSAGE is not None:
+        return True
+    if not SEGMENT_MESSAGES and not force:
+        return False
+
+    try:
+        from telethon import TelegramClient
+    except Exception:
+        return False
+
+    _ORIGINAL_SEND_MESSAGE = TelegramClient.send_message
+
+    async def humanized_send_message(self, entity, message=None, **kwargs):
+        if kwargs.get("file") is not None or not _should_segment(message):
+            return await _ORIGINAL_SEND_MESSAGE(self, entity, message, **kwargs)
+
+        segments = split_into_human_segments(message)
+        if len(segments) <= 1:
+            return await _ORIGINAL_SEND_MESSAGE(self, entity, message, **kwargs)
+
+        reply_to = kwargs.pop("reply_to", None)
+        result = None
+
+        for index, segment in enumerate(segments):
+            if index:
+                # The caller already waited for the first bubble's typing time.
+                await _inter_segment_pause(self, entity, segment)
+
+            result = await _ORIGINAL_SEND_MESSAGE(
+                self,
+                entity,
+                segment,
+                reply_to=reply_to if index == 0 else None,
+                **kwargs,
+            )
+
+        return result
+
+    TelegramClient.send_message = humanized_send_message
+    return True
+
+
+# Installed on import: main.py already imports this module, so no call sites
+# need to change.
+install_humanized_sending()
