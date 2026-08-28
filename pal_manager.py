@@ -145,16 +145,30 @@ class PalManager:
 pal_manager = PalManager()
 
 # ---------------------------------------------------------------------------
-# Quiet Hours bootstrap.
+# Behaviour add-on bootstrap.
 #
-# `quiet_hours` installs itself on import: it wraps the auto-reply decision
-# predicates (PalManager.is_active / is_auto_engage_active /
-# AssistantManager.is_active_for_chat) and registers the `121` command handler
-# lazily on the Telethon client. Importing it here (at the very end of this
-# module, after PalManager and the singleton exist) means main.py needs no
-# changes at all. Failures are non-fatal: the bot keeps running 24/7 as before.
+# Both modules install themselves on import and register their own secret codes
+# lazily on the Telethon client, so main.py needs no changes at all:
+#
+#   quiet_hours    -> code 121: sleep schedule. Wraps the auto-reply decision
+#                     predicates (PalManager.is_active / is_auto_engage_active /
+#                     AssistantManager.is_active_for_chat).
+#   human_behavior -> code 122: typo simulation + reaction-instead-of-reply +
+#                     burst guard. Wraps TelegramClient.send_message on top of
+#                     typing_helper's humanized sending patch, so it must be
+#                     imported after quiet_hours and it imports typing_helper
+#                     itself to guarantee patch ordering.
+#
+# Imports live at the very end of this module (after PalManager and the
+# singleton exist) and every failure is non-fatal: the bot keeps running
+# exactly as before if an add-on cannot load.
 # ---------------------------------------------------------------------------
 try:
     import quiet_hours as _quiet_hours  # noqa: F401
 except Exception as _quiet_hours_error:  # pragma: no cover - defensive
     print(f"\u26a0\ufe0f Quiet Hours disabled (import failed): {_quiet_hours_error}")
+
+try:
+    import human_behavior as _human_behavior  # noqa: F401
+except Exception as _human_behavior_error:  # pragma: no cover - defensive
+    print(f"\u26a0\ufe0f Human Behavior disabled (import failed): {_human_behavior_error}")
