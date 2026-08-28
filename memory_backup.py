@@ -209,6 +209,54 @@ def _save_state(state):
 
 state = _load_state()
 
+def _sanitized_api_usage(src_path, dest_dir):
+    """Write a sanitized copy of api_usage.json with real API keys replaced by
+    short hashes. Daily counters & model buckets are preserved, so a restored
+    bot keeps its numbers — while no key ever leaves the machine in plain text.
+
+    Returns the temp path, or None when there is nothing to sanitize.
+    """
+    import hashlib
+    import json as _json
+
+    try:
+        with open(src_path, "r", encoding="utf-8") as f:
+            data = _json.load(f)
+    except Exception:
+        return None
+    if not isinstance(data, dict):
+        return None
+
+    clean = {
+        "_models": data.get("_models", {}),
+        "_bans": {},
+    }
+    for key, val in data.items():
+        if key.startswith("_"):
+            clean[key] = val
+            continue
+        digest = hashlib.sha1(str(key).encode("utf-8")).hexdigest()[:10]
+        clean["key:{}".format(digest)] = val
+
+    out = os.path.join(dest_dir, "api_usage.sanitized.json")
+    try:
+        with open(out, "w", encoding="utf-8") as f:
+            _json.dump(clean, f)
+        return out
+    except Exception:
+        return None
+
+
+def _prune_temp_backup_files(target_dir):
+    """Remove any sanitized temp copy we created during backup creation."""
+    leftover = os.path.join(target_dir, "api_usage.sanitized.json")
+    if os.path.isfile(leftover):
+        try:
+            os.remove(leftover)
+        except OSError:
+            pass
+
+
 def create_backup():
     """Zip every state file into DATA_DIR/backups/. Returns (path, size, files_in_zip)."""
     target_dir = backup_dir()
@@ -228,17 +276,30 @@ def create_backup():
         for label, path in _state_files():
             try:
                 if path and os.path.exists(path) and os.path.getsize(path) > 0:
-                    zf.write(path, os.path.basename(path))
+                    src_abs = path
+                    arc_name = os.path.basename(path)
+                    if label == "api_usage":
+                        sanitized = _sanitized_api_usage(path, target_dir)
+                        if sanitized:
+                            src_abs = sanitized
+                            arc_name = "api_usage.sanitized.json"
+                            manifest_lines.append(
+                                "- api_usage: " + arc_name +
+                                " (API keys replaced with hashes; restore counters only)")
+                    zf.write(src_abs, arc_name)
                     included += 1
-                    total_bytes += os.path.getsize(path)
-                    manifest_lines.append("- {} ({}): {} bytes".format(
-                        label, os.path.basename(path), os.path.getsize(path)))
+                    total_bytes += os.path.getsize(src_abs)
+                    if label != "api_usage":
+                        manifest_lines.append("- {} ({}): {} bytes".format(
+                            label, arc_name, os.path.getsize(src_abs)))
             except OSError as error:
                 print("\u26a0\ufe0f Memory backup skipped {} ({}): {}".format(label, path, error))
         manifest_lines.append("")
         manifest_lines.append("RESTORE: unzip these files over DATA_DIR and restart the bot.")
+        manifest_lines.append("NOTE: api_usage.sanitized.json -> save as api_usage.json to keep stats.")
         zf.writestr("_" + MANIFEST_NAME, "\n".join(manifest_lines))
 
+    _prune_temp_backup_files(target_dir)
     size = os.path.getsize(zip_path)
     state["last_backup"] = time.time()
     state["last_size"] = size
