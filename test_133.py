@@ -8,7 +8,9 @@ import sys
 import os
 import asyncio
 import zipfile
+import json
 import time
+from datetime import datetime, timezone
 
 # Isolate state files BEFORE importing any project module
 _TMP_STATE = os.path.join(os.environ.get("TEMP", "/tmp"), "ghostali_test_state_133")
@@ -106,14 +108,34 @@ check("last_size matches file size", mb.state.get("last_size") == size)
 
 # ---------------------------------------------------------------------------
 print()
+print("=== 3b) api_usage sanitization (API keys NEVER appear in backup) ===")
+SECRET_KEY = "AIzaSySECRETSECRETSECRETSECRETSECRET"
+api_usage_path = os.path.join(_TMP_STATE, "api_usage_state.json")
+today_s = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+with open(api_usage_path, "w", encoding="utf-8") as f:
+    json.dump({SECRET_KEY: {"date": today_s, "count": 42}, "_models": {}}, f)
+
+zip_path2, size2, included2 = mb.create_backup()
+with zipfile.ZipFile(zip_path2, "r") as zf:
+    names2 = zf.namelist()
+    api_clean = [n for n in names2 if "api_usage" in n]
+    check("api_usage.sanitized.json is in backup", "api_usage.sanitized.json" in api_clean, str(api_clean))
+    raw = zf.read("api_usage.sanitized.json").decode("utf-8")
+    check("real API key is NOT in backup content", SECRET_KEY not in raw)
+    check("sanitized counter preserved", '"count": 42' in raw)
+    check("hashed key marker present", "key:" in raw and SECRET_KEY[:8] not in raw)
+
+print()
 print("=== 4) prune keeps only `keep` newest ===")
 for i in range(5):
     fake = os.path.join(mb.backup_dir(), f"ghostali_state_backup_2026-08-2{i}_000000.zip")
     with open(fake, "wb") as f:
         f.write(b"x")
 mb.state["keep"] = 3
+before_count = len(mb.list_backups())
 removed = mb.prune_backups()
-check("prune removed extras", removed == 3, f"removed={removed}")
+check("prune removes down to keep", removed == before_count - 3 and len(mb.list_backups()) == 3,
+      f"removed={removed}, before={before_count}")
 entries = mb.list_backups()
 check("3 backups remain", len(entries) == 3, str(entries))
 mb.state["keep"] = 7
