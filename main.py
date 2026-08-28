@@ -1143,7 +1143,7 @@ def main():
     print(f"💼 Assistant Mode (666): {assistant_manager.status_summary()}")
     pending_rem = len(reminder_manager.list_pending())
     print(f"⏰ Pending reminders: {pending_rem}")
-    print("🚀 Listening for secret codes (777, 777 engage, 666, 666 all, 444, 555 <یادآور>, 333, 999, 222 خلاصه, 112 جستجو, 111, 121 خواب, 122 رفتار انسانی, 130 آمار, 888, !مسدود)...")
+    print("🚀 Listening for secret codes (777, 777 engage, 666, 666 all, 444, 555 <یادآور>, 333, 999, 222 خلاصه, 112 جستجو, 111, 121 خواب, 122 رفتار انسانی, 130 آمار, 133 بکاپ, 888, !مسدود)...")
     print("=" * 50)
     
     client.run_until_disconnected()
