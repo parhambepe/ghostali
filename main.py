@@ -31,6 +31,9 @@ client = (
 )
 my_info = None
 
+# Scope keywords accepted by commands that can target every chat at once.
+ALL_SCOPE_WORDS = ("all", "کل", "همه", "همه‌چت‌ها")
+
 
 async def safe_delete(event):
     """Stealth-delete a command message; never raises."""
@@ -144,7 +147,7 @@ async def auto_engage_on_handler(event):
 
     if val == "auto":
         # Smart mode: measure chat speed and target ~5% bot presence
-        await confirm("⏳ در حال سنجش سرعت چت برای تنظیم هوشمند زمان تعامل...")
+        await confirm("⏳ در حال سنجش سرعت چت برای تنطیم هوشمند زمان تعامل...")
         duration = await calculate_dynamic_engage_duration(chat_id)
     else:
         duration = int(val) if val else 20
@@ -205,16 +208,31 @@ async def auto_engage_off_handler(event):
 
 # ==========================================================
 # 💼 COMMAND: روشن کردن دستیار شخصی (ASSISTANT ON / 666)
+#   666      -> فقط همین چت
+#   666 all  -> تمام پیوی‌ها
 # ==========================================================
-@client.on(events.NewMessage(outgoing=True, pattern=r'^666$'))
+@client.on(events.NewMessage(outgoing=True, pattern=r'^666(?:\s+(\S+))?$'))
 async def assistant_on_handler(event):
     if not is_owner(event):
         return
     chat_id = event.chat_id
-    assistant_manager.activate_global(chat_id=chat_id)
-    await safe_delete(event)
-    await confirm("💼 دستیار شخصی برای تمام پیوی‌ها فعال شد.")
-    print(f"💼 Universal Assistant Mode ACTIVATED for all DMs (un-muted {chat_id})")
+    scope_arg = (event.pattern_match.group(1) or "").strip().lower()
+
+    if scope_arg in ALL_SCOPE_WORDS:
+        assistant_manager.activate_all(chat_id=chat_id)
+        await safe_delete(event)
+        await confirm("💼 دستیار شخصی برای تمام پیوی‌ها (فعلی و آینده) فعال شد.")
+        print(f"💼 Universal Assistant Mode ACTIVATED for all DMs (un-muted {chat_id})")
+    elif scope_arg:
+        # Unknown argument: do not silently enable a wider scope than intended.
+        await safe_delete(event)
+        await confirm("⚠️ دستور را نفهمیدم. `666` برای همین چت، `666 all` برای تمام چت‌ها.")
+        print(f"⚠️ Unknown 666 scope argument: {scope_arg!r}")
+    else:
+        assistant_manager.activate_chat(chat_id)
+        await safe_delete(event)
+        await confirm(f"💼 دستیار شخصی فقط در چت `{chat_id}` فعال شد (برای تمام چت‌ها: `666 all`).")
+        print(f"💼 Assistant Mode ACTIVATED only for chat {chat_id}")
 
 
 # ==========================================================
@@ -227,7 +245,7 @@ async def assistant_off_handler(event):
     chat_id = event.chat_id
     scope_arg = (event.pattern_match.group(1) or "").strip().lower()
     
-    if scope_arg in ("all", "کل", "همه", "همه‌چت‌ها"):
+    if scope_arg in ALL_SCOPE_WORDS:
         assistant_manager.deactivate_global()
         print(f"🛑 Universal Assistant Mode DEACTIVATED globally for all DMs")
         await confirm("🛑 دستیار شخصی در تمام چت‌ها خاموش شد.")
@@ -333,10 +351,13 @@ async def status_handler(event):
     if event.chat_id in assistant_manager.muted_chats:
         ast_status = "🟡 **دستیار در این چت:** 🤫 **متوقف شده** (برای سایر پیوی‌ها همچنان فعال است)"
     elif assistant_manager.dm_enabled:
-        ast_status = "🟢 **دستیار شخصی (666):** برای **تمام پیوی‌ها (مخاطبان فعلی و آینده)** فعال است."
+        ast_status = "🟢 **دستیار شخصی (666 all):** برای **تمام پیوی‌ها (مخاطبان فعلی و آینده)** فعال است."
+    elif event.chat_id in assistant_manager.enabled_chats:
+        ast_status = "🟢 **دستیار شخصی (666):** فقط در **همین چت** فعال است."
     else:
-        ast_status = "⚪ **دستیار شخصی (666):** **غیرفعال** است."
+        ast_status = "⚪ **دستیار شخصی (666):** در این چت **غیرفعال** است."
     
+    ast_count_note = f"\n💼 تعداد چت‌های فعال دستیار (666): `{len(assistant_manager.enabled_chats)}`" if assistant_manager.enabled_chats else ""
     bl_note = f"\n🚫 تعداد کاربران مسدود: `{len(assistant_manager.blacklist)}`" if assistant_manager.blacklist else ""
     
     report = (
@@ -345,7 +366,7 @@ async def status_handler(event):
         f"📱 تعداد چت‌های فعال برای رفیق (777): `{pal_count}`\n\n"
         f"{engage_status}\n"
         f"🕵️ تعداد چت‌های فعال تعامل خودکار (engage): `{engage_count}`\n\n"
-        f"{ast_status}{bl_note}"
+        f"{ast_status}{ast_count_note}{bl_note}"
     )
     msg = await event.edit(report)
     await asyncio.sleep(4)
@@ -835,7 +856,7 @@ async def web_search_handler(event):
             try:
                 reply_msg = await event.get_reply_message()
                 if reply_msg and reply_msg.text:
-                    context_note = f"\n[متن پیام ریپلای‌شده که سؤال درباره آن است]:\n{reply_msg.text[:1000]}\n"
+                    context_note = f"\n[متن پیام ریپلای‌شده که سـؤال درباره آن است]:\n{reply_msg.text[:1000]}\n"
             except Exception:
                 pass
 
@@ -851,7 +872,7 @@ async def web_search_handler(event):
 
             # 2) Feed real snippets to Gemini for a clean Farsi summary
             search_ctx = format_context(results)
-            prompt = f"""سؤال کاربر: {query}
+            prompt = f"""سـؤال کاربر: {query}
 {context_note}
 نتایج جستجوی وب (واقعی):
 {search_ctx}
@@ -1089,7 +1110,7 @@ def main():
 
     # Fail fast on missing credentials instead of hanging on interactive login
     if not Config.SESSION_STRING and (not Config.API_ID or not Config.API_HASH):
-        print("❌ API_ID/API_HASH تنظیم نشده است. در Railway حتماً SESSION_STRING ست کنید.")
+        print("❌ API_ID/API_HASH تنطیم نشده است. در Railway حتماً SESSION_STRING ست کنید.")
         raise SystemExit(1)
     if Config.SESSION_STRING and (not Config.API_ID or not Config.API_HASH):
         print("❌ حتی با SESSION_STRING هم API_ID و API_HASH لازم است.")
@@ -1119,10 +1140,10 @@ def main():
     print(f"💾 Data dir: {Config.PAL_STATE_FILE.rsplit('/', 1)[0] if '/' in Config.PAL_STATE_FILE else '(cwd)'}")
     print(f"📱 Active Pal Chats (777): {pal_manager.get_active_count()}")
     print(f"🕵️ Auto-Engage Chats (777 engage): {pal_manager.get_auto_engage_count()}")
-    print(f"💼 Assistant Mode (666): {'ON (All DMs)' if assistant_manager.dm_enabled else 'OFF'}")
+    print(f"💼 Assistant Mode (666): {assistant_manager.status_summary()}")
     pending_rem = len(reminder_manager.list_pending())
     print(f"⏰ Pending reminders: {pending_rem}")
-    print("🚀 Listening for secret codes (777, 777 engage, 666, 444, 555 <یادآور>, 333, 999, 222 خلاصه, 112 جستجو, 111, 888, !مسدود)...")
+    print("🚀 Listening for secret codes (777, 777 engage, 666, 666 all, 444, 555 <یادآور>, 333, 999, 222 خلاصه, 112 جستجو, 111, 888, !مسدود)...")
     print("=" * 50)
     
     client.run_until_disconnected()
