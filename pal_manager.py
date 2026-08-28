@@ -35,7 +35,7 @@ class PalManager:
                         else:
                             self.auto_engage_chats = {int(k): int(v) for k, v in raw_engage.items()}
             except Exception as e:
-                print(f"⚠️ Error loading Pal state: {e}")
+                print(f"\u26a0\ufe0f Error loading Pal state: {e}")
                 self.active_chats = {}
                 self.auto_engage_chats = {}
         else:
@@ -54,7 +54,7 @@ class PalManager:
                 json.dump(data, f, ensure_ascii=False, indent=2)
             os.replace(tmp_file, self.state_file)
         except Exception as e:
-            print(f"⚠️ Error saving Pal state: {e}")
+            print(f"\u26a0\ufe0f Error saving Pal state: {e}")
 
     def is_active(self, chat_id: int) -> bool:
         return chat_id in self.active_chats
@@ -144,3 +144,17 @@ class PalManager:
 # Global singleton instance
 pal_manager = PalManager()
 
+# ---------------------------------------------------------------------------
+# Quiet Hours bootstrap.
+#
+# `quiet_hours` installs itself on import: it wraps the auto-reply decision
+# predicates (PalManager.is_active / is_auto_engage_active /
+# AssistantManager.is_active_for_chat) and registers the `121` command handler
+# lazily on the Telethon client. Importing it here (at the very end of this
+# module, after PalManager and the singleton exist) means main.py needs no
+# changes at all. Failures are non-fatal: the bot keeps running 24/7 as before.
+# ---------------------------------------------------------------------------
+try:
+    import quiet_hours as _quiet_hours  # noqa: F401
+except Exception as _quiet_hours_error:  # pragma: no cover - defensive
+    print(f"\u26a0\ufe0f Quiet Hours disabled (import failed): {_quiet_hours_error}")
