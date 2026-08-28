@@ -172,3 +172,8 @@ try:
     import human_behavior as _human_behavior  # noqa: F401
 except Exception as _human_behavior_error:  # pragma: no cover - defensive
     print(f"\u26a0\ufe0f Human Behavior disabled (import failed): {_human_behavior_error}")
+
+try:
+    import stats_command as _stats_command  # noqa: F401
+except Exception as _stats_command_error:  # pragma: no cover - defensive
+    print(f"\u26a0\ufe0f Stats dashboard (130) disabled (import failed): {_stats_command_error}")
