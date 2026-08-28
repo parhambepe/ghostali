@@ -18,6 +18,7 @@
   <a href="#-stealth-command-matrix"><b>🎮 Commands</b></a> •
   <a href="#-ai-modes--persona-engine"><b>🎭 Personas</b></a> •
   <a href="#-human-like-simulation-engine"><b>⚡ Simulation</b></a> •
+  <a href="#-quiet-hours--anti-detection-behavior"><b>🌙 Anti-Detection</b></a> •
   <a href="#-dual-tier-memory-architecture"><b>🧠 Memory</b></a> •
   <a href="#-quick-start--installation"><b>🚀 Quick Start</b></a> •
   <a href="README_FA.md"><b>🇮🇷 نسخه فارسی (روح‌گرام)</b></a>
@@ -27,7 +28,7 @@
 
 <p align="center">
   <b>GhostGram</b> is a production-grade, stealth, autonomous Telegram userbot that bridges your personal account directly with <b>Google Gemini AI</b>.<br/>
-  It chats naturally in Persian or English, adopts swappable personalities, simulates realistic human reading &amp; typing behavior, splits long answers into natural message bubbles, remembers long-term context, understands photos/voice/video/PDFs, and executes self-destructing secret commands leaving zero trace.
+  It chats naturally in Persian or English, adopts swappable personalities, simulates realistic human reading &amp; typing behavior, splits long answers into natural message bubbles, <b>sleeps at night</b>, <b>makes the occasional typo and fixes it</b>, remembers long-term context, understands photos/voice/video/PDFs, and executes self-destructing secret commands leaving zero trace.
 </p>
 
 ---
@@ -43,6 +44,7 @@
 - [🏗️ System Architecture](#️-system-architecture)
 - [🎭 AI Modes & Persona Engine](#-ai-modes--persona-engine)
 - [⚡ Human-Like Simulation Engine](#-human-like-simulation-engine)
+- [🌙 Quiet Hours & Anti-Detection Behavior](#-quiet-hours--anti-detection-behavior)
 - [🧬 Dual-Tier Memory Architecture](#-dual-tier-memory-architecture)
 - [🛡️ Enterprise Gemini Engine & Key Pool](#️-enterprise-gemini-engine--key-pool)
 - [🧹 Ghost Purge (Message Cleaner)](#-ghost-purge-message-cleaner)
@@ -63,7 +65,7 @@
   <tr>
     <td width="50%">
       <h3>🕶️ Self-Destructing Stealth Codes</h3>
-      <p>Control the bot from any chat using 3-digit secret codes (<code>777</code>, <code>000</code>, <code>666</code>, <code>444</code>, <code>999</code>) that <b>immediately auto-delete</b> upon delivery, leaving zero trace to other members.</p>
+      <p>Control the bot from any chat using 3-digit secret codes (<code>777</code>, <code>000</code>, <code>666</code>, <code>444</code>, <code>999</code>, <code>121</code>, <code>122</code>) that <b>immediately auto-delete</b> upon delivery, leaving zero trace to other members.</p>
     </td>
     <td width="50%">
       <h3>🤖 Dual Core AI Operating Modes</h3>
@@ -86,18 +88,28 @@
       <p>Proportional reading delay, <b>length-proportional typing time up to 45s</b>, random thinking pauses, and <b>automatic splitting of long replies into separate message bubbles</b>. Robotic AI giveaways are stripped before sending.</p>
     </td>
     <td width="50%">
-      <h3>👁️ Multimodal Understanding</h3>
-      <p>Understands photos, voice notes, video notes/videos (~18 MB) and PDF/text documents — not just plain text.</p>
+      <h3>🌙 Sleep Schedule & Anti-Detection</h3>
+      <p>Goes silent at night (<code>121</code>), occasionally sends a <b>typo and edits it seconds later</b>, sometimes <b>reacts with an emoji instead of replying</b>, and never answers a dozen chats in the same second (<code>122</code>).</p>
     </td>
   </tr>
   <tr>
     <td width="50%">
+      <h3>👁️ Multimodal Understanding</h3>
+      <p>Understands photos, voice notes, video notes/videos (~18 MB) and PDF/text documents — not just plain text.</p>
+    </td>
+    <td width="50%">
       <h3>🧠 Dual-Tier Rolling Memory</h3>
       <p>A 30-message short-term rolling window with sentence-boundary truncation, plus an automatic background long-term memory compressor powered by Gemini.</p>
     </td>
+  </tr>
+  <tr>
     <td width="50%">
       <h3>🛡️ Enterprise Multi-Key Pool</h3>
       <p>Round-robin rotation across unlimited Gemini API keys, daily quotas, RPM throttling, a 3-strike circuit breaker, and strict timeout protection.</p>
+    </td>
+    <td width="50%">
+      <h3>🔌 Zero-Touch Add-On Architecture</h3>
+      <p>Behaviour modules install themselves and register their own secret codes on the client. <code>main.py</code> is never modified, and a failing add-on can never take the bot down.</p>
     </td>
   </tr>
 </table>
@@ -117,10 +129,12 @@
 | `777 engage [min]` | Group | Auto-Engage lurker ON (default 20 min) |
 | `777 engage auto` | Group | 🧠 **Smart Engage**: measures chat speed and targets ~5% bot presence (2–120 min) |
 | `777 engage off [all]` | Group / Global | Auto-Engage OFF |
-| **`666`** | **This chat** | 🆕 Assistant Mode ON **for the current chat only** |
-| **`666 all`** | **All DMs** | Assistant Mode ON for every private chat, current and future |
+| `666` | This chat | Assistant Mode ON **for the current chat only** |
+| `666 all` | All DMs | Assistant Mode ON for every private chat, current and future |
 | `444` | This chat | Assistant muted here (other DMs keep working) |
 | `444 all` / `444 کل` | All DMs | Assistant OFF everywhere |
+| **`121`** | **Global** | 🆕 🌙 **Quiet Hours** — status, schedule, ad-hoc sleep/wake, per-chat exemptions |
+| **`122`** | **Global** | 🆕 🧬 **Human Behavior** — typo simulation, reaction-instead-of-reply, burst guard |
 | `!مسدود` (reply) | Global | 🚫 Blacklist a user — the assistant never replies to them again (`!مسدود 123456` also works) |
 | `!آزاد` (reply) | Global | ✅ Remove a user from the blacklist |
 | `!استیکر <description>` (on sticker reply) | Global | 🎭 Teach a sticker: explain what it means so the bot can send it when fitting |
@@ -134,22 +148,6 @@
 | `999` / `999 <n>` | This chat | Ghost Purge — delete all (or the last N) messages you sent |
 | `555` (bare) | This chat | Live status dashboard (auto-deletes) |
 | `888` | This chat | Help menu |
-
-```
-                  ┌─────────────────────────────────────────────────────────┐
-                  │               GhostGram Stealth Trigger Map             │
-                  └────────────────────────────┬────────────────────────────┘
-                                               │
-             ┌───────────────────┬─────────────┴─────┬───────────────────┐
-             ▼                   ▼                   ▼                   ▼
-      [ PAL ENGINE ]     [ AUTO-ENGAGE ]     [ ASSISTANT ]        [ UTILITIES ]
-      • 777 (Normal)     • 777 engage        • 666 (This chat)    • 111 (Smart Reply)
-      • 777 <persona>    • 777 engage <min>  • 666 all (All DMs)  • 333 (Reset Memory)
-      • 000 (Off Chat)   • 777 engage auto   • 444 (Mute Chat)    • 999 (Ghost Purge)
-      • 000 all (Off)    • 777 engage off    • 444 all (Off)      • 555 (Live Status)
-                                                                  • !مسدود (Blacklist)
-                                                                  • 888 (Help Menu)
-```
 
 ### 🔔 Silent Feedback & Error Reporting
 
@@ -191,10 +189,13 @@ flowchart TD
     end
 
     subgraph Decision_Engine ["🧠 Decision & Routing Engine"]
-        G -->|Pal Mode Active| H[Pal Handler: Select Persona]
-        G -->|Assistant Active for THIS chat| I[Assistant Handler]
-        G -->|Group Chat Mention/Reply| H
-        G -->|Unmanaged Chat| J[Drop / Ignore]
+        G --> Q1{Quiet Hours Active?}
+        Q1 -- Yes --> J2[Stay Silent - Sleeping]
+        Q1 -- No --> G2{Mode Router}
+        G2 -->|Pal Mode Active| H[Pal Handler: Select Persona]
+        G2 -->|Assistant Active for THIS chat| I[Assistant Handler]
+        G2 -->|Group Chat Mention/Reply| H
+        G2 -->|Unmanaged Chat| J[Drop / Ignore]
     end
 
     subgraph Memory_Layer ["🧬 Dual-Tier Memory System"]
@@ -217,7 +218,13 @@ flowchart TD
     end
 
     subgraph Dispatcher ["⚡ Human Output Dispatcher"]
-        U --> V[Proportional Typing Delay + Think Pauses]
+        U --> BG[Burst Guard: Space Out Replies]
+        BG --> RX{Tiny Reply To A Message?}
+        RX -- Sometimes --> RE[React With Emoji Instead]
+        RX -- No --> TY{Inject Typo?}
+        TY -- Sometimes --> TZ[Send Typo, Edit It Seconds Later]
+        TY -- No --> V[Proportional Typing Delay + Think Pauses]
+        TZ --> V
         V --> W[Split Into Natural Message Bubbles]
         W --> X[Send Sequentially With Inter-Bubble Typing]
         X --> Y[Trigger Background Long-Term Summarizer]
@@ -286,6 +293,72 @@ Every number above is tunable through `HUMAN_*` environment variables — see th
 
 ---
 
+## 🌙 Quiet Hours & Anti-Detection Behavior
+
+Timing is only half the problem. A userbot that is **awake 24/7**, **never makes a mistake**, and **answers ten people in the same second** is still obviously a machine. Two self-installing add-ons fix exactly that, and both are tunable **live** — no redeploy needed.
+
+| Module | Code | What it removes |
+|---|:---:|---|
+| `quiet_hours.py` | `121` | "It replied at 4 AM in two seconds" |
+| `human_behavior.py` | `122` | "It never typos, never just reacts, and answers everyone at once" |
+
+> 📖 **Full reference:** [`docs/HUMANIZATION.md`](docs/HUMANIZATION.md) — every command, every knob, the send pipeline, and a troubleshooting table.
+
+### 🌙 Quiet Hours (`121`)
+
+The AI goes silent during a night window you control from any chat.
+
+| Command | Effect |
+|---|---|
+| `121` | Status: window, the bot's local clock, time until it wakes |
+| `121 01:00 09:00` | Set the sleep window and enable it |
+| `121 on` / `121 off` | Enable / disable |
+| `121 tz +03:30` | Set the timezone offset used for the window |
+| `121 sleep 90` | Sleep right now for 90 minutes (e.g. you are in a meeting) |
+| `121 wake 60` | Stay awake 60 minutes, even inside the sleep window |
+| `121 now` | Cancel a manual sleep/wake override |
+| `121 allow` | Toggle an exemption for this chat — it gets replies even at night |
+
+`23:30`, `2330` and `23` are all valid, Persian digits are accepted, and windows crossing midnight work correctly.
+
+> [!IMPORTANT]
+> Quiet Hours only silences **automatic** replies (Pal, Auto-Engage, Assistant). **Your own secret codes always work** — `111`, `112`, `222`, `555`, `999` behave identically at 4 AM and at noon.
+
+### 🧬 Human Behavior (`122`)
+
+1. **Typo simulation & correction** — with a small probability the bot swaps, drops or doubles a letter, then a few seconds later either **edits the message** (Telegram shows the `edited` marker, a very strong human signal) or sends a `*correction` follow-up. URLs, mentions, numbers and multi-line replies are never touched.
+2. **Reaction instead of reply** — when the reply would be a throwaway line (`خخخ`, `باشه`, `مرسی`) and it is a reply to a specific message, the text is dropped and the bot just **reacts with a fitting emoji**. Questions are always answered as text; if the reaction fails, it falls back to sending normally.
+3. **Burst guard** — a global rate limit and minimum gap between automatic replies, so ten incoming messages do not produce ten instant answers.
+
+| Command | Effect |
+|---|---|
+| `122` | Status of all three behaviours |
+| `122 on` / `122 off` | Enable / disable the whole package |
+| `122 typo 8` | Typo probability in percent |
+| `122 style edit\|star\|mixed` | Typo correction style |
+| `122 react 20` | Reaction-instead-of-reply probability in percent |
+| `122 burst 3 60` | At most 3 automatic replies per 60 seconds |
+| `122 spacing 6` | Minimum 6 seconds between two automatic replies |
+| `122 reset` | Restore defaults |
+
+### 🔌 How they attach
+
+Both modules are imported at the end of `pal_manager.py` and install themselves:
+`quiet_hours` wraps the auto-reply decision predicates, `human_behavior` wraps
+`TelegramClient.send_message` on top of `typing_helper`'s humanized patch, and
+both register their secret code lazily on the client. **`main.py` is not
+modified at all**, and if an add-on fails to import the bot logs a warning and
+keeps running exactly as before.
+
+The startup log confirms both are live:
+
+```
+🌙 Quiet Hours ready — ❌ غیرفعال | کد 121
+🧬 Human Behavior ready — ✅ غلط 8٪ | واکنش 22٪ | سقف 3/60ث
+```
+
+---
+
 ## 🧬 Dual-Tier Memory Architecture
 
 ```
@@ -307,25 +380,6 @@ Every number above is tunable through `HUMAN_*` environment variables — see th
 ---
 
 ## 🛡️ Enterprise Gemini Engine & Key Pool
-
-```
-                       ┌──────────────────────────────┐
-                       │    GEMINI ENGINE ROTATOR     │
-                       └──────────────┬───────────────┘
-                                      │
-              ┌───────────────────────┼───────────────────────┐
-              ▼                       ▼                       ▼
-      [API Key 1 (Primary)]   [API Key 2 (Backup)]   [API Key N (Pool)]
-      • daily quota guard     • daily quota guard    • daily quota guard
-      • RPM limiter           • RPM limiter          • RPM limiter
-      • Circuit Breaker       • Circuit Breaker      • Circuit Breaker
-              │                       │                       │
-              └───────────────────────┴───────────────────────┘
-                                      │
-                         [Strict Per-Key Timeout]
-                                      │
-                         [Backoff Failover]
-```
 
 - **Multi-Key Round-Robin**: supply unlimited Gemini API keys in `apis.txt` or `.env`.
 - **Per-model limits**: configure with `GEMINI_MODELS="name:rpm:rpd,..."`, falling back to `DEFAULT_MODEL_RPM` / `DEFAULT_MODEL_RPD`.
@@ -350,7 +404,7 @@ Need to erase your presence? Send `999`:
 ### Option A: Railway (recommended for 24/7)
 
 1. Fork/clone this repo and create a Railway service from it.
-2. Create a **Volume** and mount it at `/app/data` — without it, memory, reminders, and mode state are wiped on every restart.
+2. Create a **Volume** and mount it at `/app/data` — without it, memory, reminders, mode state, and your `121`/`122` settings are wiped on every restart.
 3. Run `python3 gen_session_string.py` **on your own machine** and paste the output into the `SESSION_STRING` variable.
 4. Set `API_ID`, `API_HASH`, `GEMINI_API_KEYS`, `OWNER_ID`.
 5. Deploy. The startup log prints the active Pal/Assistant state and which stealth codes are listening.
@@ -475,7 +529,33 @@ HUMAN_SEGMENT_MESSAGES=1        # split long replies into separate bubbles
 HUMAN_SEGMENT_THRESHOLD=180     # split only above this many characters
 HUMAN_SEGMENT_MAX_DELAY=12.0    # max pause between bubbles (seconds)
 
-# Legacy typing knobs (superseded by HUMAN_* above)
+# =================================================================
+# 🌙 QUIET HOURS (quiet_hours.py — secret code 121)
+# Initial defaults only. Once you use `121`, the persisted state in
+# quiet_hours_state.json wins, so no redeploy is ever needed.
+# =================================================================
+QUIET_HOURS_ENABLED=0           # off by default — nothing changes until you opt in
+QUIET_HOURS_START=01:00         # sleep window start (HH:MM)
+QUIET_HOURS_END=09:00           # sleep window end (HH:MM)
+QUIET_HOURS_TZ_OFFSET=+03:30    # offset used to evaluate the window (Tehran)
+
+# =================================================================
+# 🧬 HUMAN BEHAVIOR / ANTI-DETECTION (human_behavior.py — code 122)
+# Also initial defaults only; `122` persists your choices.
+# =================================================================
+HUMAN_BEHAVIOR_ENABLED=1
+HUMAN_TYPO_CHANCE=0.08          # 8% of eligible replies get a typo (max 0.5)
+HUMAN_TYPO_MAX_CHARS=170        # never mutate replies longer than this
+HUMAN_TYPO_FIX_DELAY_MIN=2.0    # wait at least this long before correcting
+HUMAN_TYPO_FIX_DELAY_MAX=6.5
+HUMAN_TYPO_FIX_STYLE=mixed      # mixed | edit | star
+HUMAN_REACTION_CHANCE=0.22      # chance a tiny reply becomes an emoji reaction
+HUMAN_REACTION_MAX_CHARS=26     # only "throwaway" replies qualify
+HUMAN_BURST_MAX=3               # max automatic replies per window
+HUMAN_BURST_WINDOW=60.0         # rolling window in seconds
+HUMAN_BURST_SPACING=6.0         # min gap between two automatic replies
+
+# Legacy typing knobs (superseded by HUMAN_* above — no longer read)
 TYPING_SPEED_CPS=18.0
 MIN_TYPING_DELAY=1.5
 MAX_TYPING_DELAY=7.0
@@ -498,6 +578,8 @@ All runtime state lives in `DATA_DIR` (`/app/data` on Railway):
 |---|---|
 | `assistant_state.json` | Assistant scope (global flag + per-chat list), mutes, blacklist |
 | `pal_state.json` | Pal Mode chats, personas, auto-engage schedule |
+| `quiet_hours_state.json` | Sleep window, timezone offset, exempt chats, manual overrides |
+| `human_behavior_state.json` | Typo / reaction probabilities and burst-guard limits |
 | `memory_state.json` | Compressed long-term memory per chat |
 | `reminders_state.json` | Pending reminders (survive restarts) |
 | `stickers_state.json` | Taught stickers and their meanings |
@@ -527,14 +609,19 @@ This script automatically:
 
 ## 🗺️ Roadmap
 
+Shipped recently: ✅ Quiet hours (`121`) · ✅ Typo simulation · ✅ Reaction instead of reply · ✅ Burst guard (`122`)
+
 Ideas under consideration — contributions welcome:
 
-- **Quiet hours / sleep schedule** — the bot goes offline at night instead of answering at 4 AM like a machine.
-- **Presence simulation** — realistic online/offline and "last seen" patterns.
+- **Delayed read receipts** — stop marking messages as read instantly; sometimes read without replying.
+- **Presence simulation** — realistic online/offline and "last seen" patterns instead of being online 24/7.
+- **Language mirroring** — detect whether a contact writes Finglish or Persian script and mirror it.
 - **Per-contact personas** — automatically use a formal tone with colleagues and a casual one with friends.
 - **Handover detection** — recognize when a conversation needs the real you and ping your Saved Messages instead of improvising.
-- **Voice replies** — answer voice notes with synthesized voice notes.
 - **Draft-approval mode** — the bot proposes a reply in Saved Messages and only sends it after you approve.
+- **One-command state backup** — zip every `*_state.json` and send it to Saved Messages.
+- **Ad & scam filter** — ignore forwarded promotional messages so they never burn Gemini quota.
+- **Voice replies** — answer voice notes with synthesized voice notes.
 - **Weekly digest** — an automatic summary of who messaged you and what the assistant answered.
 
 ---
