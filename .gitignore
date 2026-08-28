@@ -4,6 +4,15 @@ assistant_state.json
 memory_state.json
 reminders_state.json
 api_usage.json
+quiet_hours_state.json
+human_behavior_state.json
+memory_backup_state.json
+stickers_state.json
+*_state.json
+state/
+backups/
+.secrets/
+github_token.txt
 apis.txt
 *.session
 *.session-journal
