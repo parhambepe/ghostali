@@ -6,9 +6,9 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Python-3.10%20%7C%203.11%20%7C%203.12-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python Version" />
   <img src="https://img.shields.io/badge/Telethon-MTProto%20v2-2CA5E0?style=for-the-badge&logo=telegram&logoColor=white" alt="Telethon" />
-  <img src="https://img.shields.io/badge/Google%20Gemini-Flash%202.0%20%26%201.5-8E75C2?style=for-the-badge&logo=googlegemini&logoColor=white" alt="Google Gemini" />
+  <img src="https://img.shields.io/badge/Google%20Gemini-Multimodal-8E75C2?style=for-the-badge&logo=googlegemini&logoColor=white" alt="Google Gemini" />
+  <img src="https://img.shields.io/badge/Railway-24%2F7%20Deploy-0B0D0E?style=for-the-badge&logo=railway&logoColor=white" alt="Railway" />
   <img src="https://img.shields.io/badge/Docker-Ready%20%26%20Compose-2496ED?style=for-the-badge&logo=docker&logoColor=white" alt="Docker" />
-  <img src="https://img.shields.io/badge/Systemd-24%2F7%20Background%20Service-E95420?style=for-the-badge&logo=ubuntu&logoColor=white" alt="Systemd" />
   <img src="https://img.shields.io/badge/Stealth-Zero%20Trace-000000?style=for-the-badge&logo=ghostery&logoColor=white" alt="Stealth Mode" />
   <img src="https://img.shields.io/badge/License-MIT-44CC11?style=for-the-badge" alt="License" />
 </p>
@@ -16,7 +16,7 @@
 <p align="center">
   <a href="#-core-features"><b>✨ Features</b></a> •
   <a href="#-stealth-command-matrix"><b>🎮 Commands</b></a> •
-  <a href="#-dual-ai-modes--multi-persona-engine"><b>🎭 Personas</b></a> •
+  <a href="#-ai-modes--persona-engine"><b>🎭 Personas</b></a> •
   <a href="#-human-like-simulation-engine"><b>⚡ Simulation</b></a> •
   <a href="#-dual-tier-memory-architecture"><b>🧠 Memory</b></a> •
   <a href="#-quick-start--installation"><b>🚀 Quick Start</b></a> •
@@ -27,7 +27,7 @@
 
 <p align="center">
   <b>GhostGram</b> is a production-grade, stealth, autonomous Telegram userbot that bridges your personal account directly with <b>Google Gemini AI</b>.<br/>
-  It chats naturally in Persian or English, adopts dynamic swappable personalities, simulates realistic human reading & typing behavior, remembers long-term context, and executes self-destructing secret commands leaving zero trace.
+  It chats naturally in Persian or English, adopts swappable personalities, simulates realistic human reading &amp; typing behavior, splits long answers into natural message bubbles, remembers long-term context, understands photos/voice/video/PDFs, and executes self-destructing secret commands leaving zero trace.
 </p>
 
 ---
@@ -39,23 +39,18 @@
 
 - [✨ Core Features](#-core-features)
 - [🎮 Stealth Command Matrix](#-stealth-command-matrix)
+- [🎯 Assistant Scoping (`666` vs `666 all`)](#-assistant-scoping-666-vs-666-all)
 - [🏗️ System Architecture](#️-system-architecture)
-- [🎭 Dual AI Modes & Multi-Persona Engine](#-dual-ai-modes--multi-persona-engine)
-  - [1. Pal Mode (Autonomous Alter-Ego)](#1-pal-mode-autonomous-alter-ego)
-  - [2. Assistant Mode (24/7 Digital Secretary)](#2-assistant-mode-247-digital-secretary)
-  - [3. Auto-Engage / Lurker Mode](#3-auto-engage--lurker-mode)
-  - [4. Dynamic Persona Switching](#4-dynamic-persona-switching)
+- [🎭 AI Modes & Persona Engine](#-ai-modes--persona-engine)
 - [⚡ Human-Like Simulation Engine](#-human-like-simulation-engine)
 - [🧬 Dual-Tier Memory Architecture](#-dual-tier-memory-architecture)
 - [🛡️ Enterprise Gemini Engine & Key Pool](#️-enterprise-gemini-engine--key-pool)
 - [🧹 Ghost Purge (Message Cleaner)](#-ghost-purge-message-cleaner)
 - [🚀 Quick Start & Installation](#-quick-start--installation)
-  - [Option A: 1-Click Interactive Setup Wizard (Windows)](#option-a-1-click-interactive-setup-wizard-windows)
-  - [Option B: Manual / Local Installation](#option-b-manual--local-installation)
-  - [Option C: Docker & Docker Compose](#option-c-docker--docker-compose)
-  - [Option D: 1-Click 24/7 Linux VPS Deployment](#option-d-1-click-247-linux-vps-deployment)
 - [⚙️ Configuration Reference (.env)](#️-configuration-reference-env)
+- [💾 State Files & Migrations](#-state-files--migrations)
 - [🔒 Security & Zero-Leak Export](#-security--zero-leak-export)
+- [🗺️ Roadmap](#️-roadmap)
 - [📄 License & Disclaimer](#-license--disclaimer)
 
 </details>
@@ -72,37 +67,37 @@
     </td>
     <td width="50%">
       <h3>🤖 Dual Core AI Operating Modes</h3>
-      <p>Seamlessly toggle between <b>Pal Mode</b> (conversing informally in your tone/dialect) and <b>Assistant Mode</b> (acting as your polite 24/7 secretary for incoming private DMs).</p>
+      <p>Toggle between <b>Pal Mode</b> (conversing informally in your own tone) and <b>Assistant Mode</b> (a polite 24/7 secretary for incoming DMs) — now with <b>per-chat or global scoping</b>.</p>
     </td>
   </tr>
   <tr>
     <td width="50%">
       <h3>🎭 Dynamic Multi-Persona Engine</h3>
-      <p>Load unlimited custom personas from <code>personas/*.txt</code> files and swap them on the fly (<code>777 lust</code>, <code>777 sarcastic</code>, <code>777 poetic</code>, <code>777 angry</code>) without restarting.</p>
+      <p>Load unlimited custom personas from <code>personas/*.txt</code> and swap them on the fly (<code>777 lust</code>, <code>777 sarcastic</code>, <code>777 poetic</code>, <code>777 angry</code>) with zero downtime.</p>
     </td>
     <td width="50%">
       <h3>🕵️ Autonomous Group Lurker (Auto-Engage)</h3>
-      <p>Periodically analyzes group discussions in the background via structured JSON output and naturally chimes into interesting debates at randomized human intervals.</p>
+      <p>Periodically analyzes group discussions via structured JSON output and naturally chimes into interesting debates at randomized human intervals.</p>
     </td>
   </tr>
   <tr>
     <td width="50%">
       <h3>⚡ Ultra-Realistic Human Behavior</h3>
-      <p>Calculates reading delays based on text length + simulates realistic non-linear typing speed (CPM/WPM) with active Telegram typing actions. Automatically strips robotic AI giveaways (emojis & formatting).</p>
+      <p>Proportional reading delay, <b>length-proportional typing time up to 45s</b>, random thinking pauses, and <b>automatic splitting of long replies into separate message bubbles</b>. Robotic AI giveaways are stripped before sending.</p>
     </td>
     <td width="50%">
-      <h3>🧠 Dual-Tier Rolling Memory</h3>
-      <p>Features a 30-message short-term rolling window with smart sentence-boundary truncation, plus an automatic background long-term memory compressor powered by Gemini.</p>
+      <h3>👁️ Multimodal Understanding</h3>
+      <p>Understands photos, voice notes, video notes/videos (~18 MB) and PDF/text documents — not just plain text.</p>
     </td>
   </tr>
   <tr>
     <td width="50%">
-      <h3>🛡️ Enterprise Multi-Key Pool</h3>
-      <p>Round-robin rotation across unlimited Gemini API keys, daily quotas (490/key buffer), 15 RPM throttling, 3-strike circuit breaker, and strict 15s timeout protection.</p>
+      <h3>🧠 Dual-Tier Rolling Memory</h3>
+      <p>A 30-message short-term rolling window with sentence-boundary truncation, plus an automatic background long-term memory compressor powered by Gemini.</p>
     </td>
     <td width="50%">
-      <h3>🧹 Ghost Purge (Message Cleaner)</h3>
-      <p>Instantly batch-deletes all messages sent by you in any chat or supergroup with built-in Telegram FloodWait recovery and zero traces.</p>
+      <h3>🛡️ Enterprise Multi-Key Pool</h3>
+      <p>Round-robin rotation across unlimited Gemini API keys, daily quotas, RPM throttling, a 3-strike circuit breaker, and strict timeout protection.</p>
     </td>
   </tr>
 </table>
@@ -112,42 +107,33 @@
 ## 🎮 Stealth Command Matrix
 
 > [!IMPORTANT]
-> **Owner-Only Security**: All stealth codes are strictly restricted to your personal Telegram account (`event.out`). Any command you send **deletes itself immediately**, and a short confirmation is silently posted to your **Saved Messages** (auto-deleted after a few seconds).
+> **Owner-Only Security**: All stealth codes are strictly restricted to messages sent from your own account (`event.out`). Any command you send **deletes itself immediately**, and a short confirmation is silently posted to your **Saved Messages** (auto-deleted after a few seconds).
 
-| Code | Action |
-|---|---|
-| `777` / `777 <persona>` | Pal Mode ON (autonomous alter-ego in this chat) |
-| `000` / `000 all` | Pal Mode OFF (this chat / all chats) |
-| `777 engage [min]` | Auto-Engage lurker ON (default 20 min) |
-| `777 engage auto` | 🧠 **NEW — Smart Engage**: measures chat speed and sets the interval for ~5% bot presence (2–120 min) |
-| `777 engage off [all]` | Auto-Engage OFF |
-| `666` | Assistant Mode ON (all DMs) |
-| `444` / `444 all` or `444 کل` | Assistant OFF (this chat / all) |
-| `!مسدود` (reply) | 🚫 **NEW — Blacklist a user**: the assistant will never reply to them again (ID also accepted: `!مسدود 123456`) |
-| `!آزاد` (reply) | ✅ **NEW — Remove user from blacklist** |
-| `!استیکر <توضیح>` (on sticker reply) | 🎭 **NEW — Teach a sticker**: explain what it means; the bot remembers and can send it when fitting |
-| `!استیکر لیست` | 🎭 List all taught stickers |
-| `!استیکر حذف` (on sticker reply) | 🎭 Remove a taught sticker from the sendable pool |
-| `222 [hours]` | 📋 Group catch-up summary (what you missed; default 12h, max 72h) |
-| `112 <question>` | 🌐 Web search via Google Search grounding (longer timeout for grounded calls) |
-| `555 <instruction>` | ⏰ Smart reminder: `555 ساعت 21 به علی بگو تماس بگیره` · `555 تا ۲ ساعت دیگه دارو بخور` |
-| `333` | Reset short-term memory of this chat |
-| `999 [n]` | Ghost Purge (delete your messages) |
-| `111 [text]` | Smart custom reply (use while replying to a message) |
-| `555` (bare) / `888` | Status report / Help |
-
-### 👁️ Multimodal Understanding
-When Pal or Assistant mode is active, the bot now **understands photos, voice notes, video notes and PDF/text documents** — not just text:
-- Send a photo → it is analyzed by Gemini and answered naturally.
-- Send a voice message → it is transcribed/understood by Gemini and answered in chat.
-- Send a video note / video → it is watched and understood (up to ~18 MB).
-- Send a PDF/text document → its content is read and understood.
-
-*(reminders survive restarts — persisted in `reminders_state.json` inside your volume)*
-
-### 🔔 Silent Feedback & Error Reporting
-- Every stealth command is confirmed in your **Saved Messages** and auto-deleted — zero traces in the target chat.
-- Engine/send failures are reported to **Saved Messages** so a headless Railway deployment never fails silently (disable with `NOTIFY_ERRORS=0`).
+| Code | Scope | Action |
+|---|:---:|---|
+| `777` / `777 <persona>` | This chat | Pal Mode ON (autonomous alter-ego) |
+| `000` | This chat | Pal Mode OFF |
+| `000 all` | Global | Pal Mode OFF everywhere |
+| `777 engage [min]` | Group | Auto-Engage lurker ON (default 20 min) |
+| `777 engage auto` | Group | 🧠 **Smart Engage**: measures chat speed and targets ~5% bot presence (2–120 min) |
+| `777 engage off [all]` | Group / Global | Auto-Engage OFF |
+| **`666`** | **This chat** | 🆕 Assistant Mode ON **for the current chat only** |
+| **`666 all`** | **All DMs** | Assistant Mode ON for every private chat, current and future |
+| `444` | This chat | Assistant muted here (other DMs keep working) |
+| `444 all` / `444 کل` | All DMs | Assistant OFF everywhere |
+| `!مسدود` (reply) | Global | 🚫 Blacklist a user — the assistant never replies to them again (`!مسدود 123456` also works) |
+| `!آزاد` (reply) | Global | ✅ Remove a user from the blacklist |
+| `!استیکر <description>` (on sticker reply) | Global | 🎭 Teach a sticker: explain what it means so the bot can send it when fitting |
+| `!استیکر لیست` | Global | 🎭 List all taught stickers |
+| `!استیکر حذف` (on sticker reply) | Global | 🎭 Remove a taught sticker from the sendable pool |
+| `222 [hours]` | This chat | 📋 Catch-up summary of what you missed (default 12h, max 72h) |
+| `112 <question>` | Anywhere | 🌐 Web search via Google Search grounding (longer timeout) |
+| `111` / `111 <prompt>` | Reply target | Smart reply to the quoted message, optionally following your instruction |
+| `555 <instruction>` | This chat | ⏰ Smart reminder — `555 ساعت 21 به علی بگو تماس بگیره` · `555 تا ۲ ساعت دیگه دارو بخور` |
+| `333` | This chat | Reset short-term + long-term memory for this chat |
+| `999` / `999 <n>` | This chat | Ghost Purge — delete all (or the last N) messages you sent |
+| `555` (bare) | This chat | Live status dashboard (auto-deletes) |
+| `888` | This chat | Help menu |
 
 ```
                   ┌─────────────────────────────────────────────────────────┐
@@ -157,38 +143,37 @@ When Pal or Assistant mode is active, the bot now **understands photos, voice no
              ┌───────────────────┬─────────────┴─────┬───────────────────┐
              ▼                   ▼                   ▼                   ▼
       [ PAL ENGINE ]     [ AUTO-ENGAGE ]     [ ASSISTANT ]        [ UTILITIES ]
-      • 777 (Normal)     • 777 engage        • 666 (All DMs)      • 111 (Smart Reply)
-      • 777 <persona>    • 777 engage <min>  • 444 (Mute Chat)    • 333 (Reset Memory)
-      • 000 (Off Chat)   • 777 engage off    • 444 all/کل (Off)   • 999 (Ghost Purge)
-      • 000 all (Off)    • 777 engage off all                     • 555 (Live Status)
+      • 777 (Normal)     • 777 engage        • 666 (This chat)    • 111 (Smart Reply)
+      • 777 <persona>    • 777 engage <min>  • 666 all (All DMs)  • 333 (Reset Memory)
+      • 000 (Off Chat)   • 777 engage auto   • 444 (Mute Chat)    • 999 (Ghost Purge)
+      • 000 all (Off)    • 777 engage off    • 444 all (Off)      • 555 (Live Status)
                                                                   • !مسدود (Blacklist)
                                                                   • 888 (Help Menu)
 ```
 
-### 📋 Full Command Directory
+### 🔔 Silent Feedback & Error Reporting
 
-| Stealth Trigger | Text Alias | Scope | Action & Description |
-| :--- | :--- | :---: | :--- |
-| `777` | - | Single Chat | **Activate Pal Mode** with default conversational persona. |
-| `777 <persona>` | - | Single Chat | **Activate Custom Persona** (e.g., `777 lust`, `777 sarcastic`, `777 poetic`). |
-| `000` | - | Single Chat | **Deactivate Pal Mode** for the current chat. |
-| `000 all` | - | Global | **Deactivate Pal Mode Globally** across all active chats. |
-| `777 engage` | - | Group Chat | **Activate Auto-Engage Lurker** (evaluates group every 20 minutes). |
-| `777 engage <min>` | - | Group Chat | **Activate Auto-Engage with custom interval** (e.g., `777 engage 45`). |
-| `777 engage off` | - | Group Chat | **Disable Auto-Engage** in current group. |
-| `777 engage off all` | - | Global | **Disable Auto-Engage Globally** across all groups. |
-| `666` | - | Global DMs | **Activate Universal Assistant** for all incoming private messages. |
-| `444` | - | Single Chat | **Mute Assistant** in this specific chat only (other DMs remain active). |
-| `444 all` / `444 کل` | - | Global DMs | **Deactivate Assistant Globally** across all DMs (both spellings accepted). |
-| `!مسدود` (on reply) | - | Single Chat | **Blacklist User (NEW)**: assistant never replies to this user again. Also accepts an ID: `!مسدود 123456`. |
-| `!آزاد` (on reply) | - | Single Chat | **Un-blacklist User (NEW)**. |
-| `111` (on reply) | - | Reply Target | **Smart Reply**: Generates an intelligent, natural response to the quoted message. |
-| `111 <prompt>` | - | Reply Target | **Directed Smart Reply**: Generates response following your instructions (e.g. `111 say I'm busy`). |
-| `333` | - | Single Chat | **Reset Memory**: Clears short-term history and compressed long-term memory for this chat. |
-| `999` | `!پاکسازی` | Single Chat | **Ghost Purge All**: Deletes every message sent by you in this chat since the beginning of time. |
-| `999 <count>` | `!پاکسازی <تعداد>` | Single Chat | **Ghost Purge Last N**: Deletes your last `N` messages in this chat. |
-| `555` | `!وضعیت` | Single Chat | **Live Status**: Displays an active status dashboard and auto-deletes after 4 seconds. |
-| `888` | `!راهنما` | Single Chat | **Help Menu**: Edits current message to display the interactive help directory. |
+- Every stealth command is confirmed in your **Saved Messages** and auto-deleted — zero traces in the target chat.
+- Engine/send failures are reported to **Saved Messages**, so a headless Railway deployment never fails silently (disable with `NOTIFY_ERRORS=0`).
+
+---
+
+## 🎯 Assistant Scoping (`666` vs `666 all`)
+
+Assistant activation used to be all-or-nothing. It is now **two-layered**, so you can let the secretary handle one specific person without exposing every DM to it.
+
+| Command | Result |
+|---|---|
+| `666` | Enables the assistant **only in the chat where you sent it**. Repeat it in each chat you want covered. |
+| `666 all` | Enables the assistant for **all private chats**, including people who message you for the first time later. Aliases: `666 کل`, `666 همه`, `666 همه‌چت‌ها`. |
+| `666 <anything else>` | Rejected with a warning — a typo can never silently switch you into global mode. |
+| `444` | Mutes the assistant in this chat (also removes it from the per-chat enabled list). |
+| `444 all` | Fully disables the assistant: clears global mode, the per-chat list, and mutes. |
+
+The `555` dashboard tells you exactly which layer is active, plus how many chats are individually enabled.
+
+> [!WARNING]
+> **One-time migration.** State files written before this change are upgraded on first boot and the assistant is switched **off** so it cannot silently keep answering every DM. After upgrading, send `666` in the chats you want, or `666 all` once to restore the previous behavior. Blacklists and muted chats are preserved.
 
 ---
 
@@ -207,7 +192,7 @@ flowchart TD
 
     subgraph Decision_Engine ["🧠 Decision & Routing Engine"]
         G -->|Pal Mode Active| H[Pal Handler: Select Persona]
-        G -->|Assistant Active & DM| I[Assistant Handler]
+        G -->|Assistant Active for THIS chat| I[Assistant Handler]
         G -->|Group Chat Mention/Reply| H
         G -->|Unmanaged Chat| J[Drop / Ignore]
     end
@@ -223,8 +208,8 @@ flowchart TD
         M --> N[Simulate Reading Delay]
         N --> O[Continuous 'typing...' Action State]
         O --> P[Round-Robin Key Selector]
-        P --> Q[Check Daily Quota 490 & 15 RPM Limits]
-        Q --> R[15s Hard Timeout Gemini Query]
+        P --> Q[Check Daily Quota & RPM Limits]
+        Q --> R[Hard Timeout Gemini Query]
         R --> S{Success?}
         S -- No --> T[Trip Circuit Breaker & Rotate Next Key]
         T --> P
@@ -232,24 +217,25 @@ flowchart TD
     end
 
     subgraph Dispatcher ["⚡ Human Output Dispatcher"]
-        U --> V[Calculate Non-Linear Typing Delay]
-        V --> W[Send Message to Telegram]
-        W --> X[Trigger Background Long-Term Summarizer]
+        U --> V[Proportional Typing Delay + Think Pauses]
+        V --> W[Split Into Natural Message Bubbles]
+        W --> X[Send Sequentially With Inter-Bubble Typing]
+        X --> Y[Trigger Background Long-Term Summarizer]
     end
 ```
 
 ---
 
-## 🎭 Dual AI Modes & Multi-Persona Engine
+## 🎭 AI Modes & Persona Engine
 
 ### 1. Pal Mode (Autonomous Alter-Ego)
-When active (`777`), GhostGram assumes your identity. It learns your slang, avoids robotic emojis, references your shared conversation history, and responds naturally. In group chats, it stays silent until directly addressed or mentioned.
+When active (`777`), GhostGram assumes your identity. It learns your slang, avoids robotic emojis, references your shared conversation history, and responds naturally. In group chats it stays silent until directly addressed or mentioned.
 
-### 2. Assistant Mode (24/7 Digital Secretary)
-Activated globally with `666`, Assistant Mode turns your account into a polite personal secretary for all incoming DMs. It greets contacts, handles inquiries, takes messages, and tells them when you'll be available. You can mute specific conversations with `444`.
+### 2. Assistant Mode (Digital Secretary)
+Activated per chat with `666` or globally with `666 all`. It greets contacts, handles inquiries, takes messages, and tells them when you will be available. Mute individual conversations with `444`.
 
 ### 3. Auto-Engage / Lurker Mode
-With `777 engage <interval>`, GhostGram observes group conversations silently. At randomized intervals around your target time (e.g. every 20 minutes), it feeds recent context into Gemini with a structured JSON schema. If an engaging question or debate is found, it joins in naturally.
+With `777 engage <interval>`, GhostGram observes group conversations silently. At randomized intervals it feeds recent context into Gemini with a structured JSON schema; if an engaging question or debate is found, it joins in naturally. `777 engage auto` picks the interval for you based on how fast the group actually moves.
 
 ### 4. Dynamic Persona Switching
 Add custom `.txt` files to `personas/` to unlock instant runtime personality switching:
@@ -267,24 +253,36 @@ personas/
 ```
 
 > [!TIP]
-> **Hot-Swapping**: You can create a new file `personas/philosopher.txt` while the bot is running, and immediately use it in chat with `777 philosopher` — zero downtime!
+> **Hot-Swapping**: Create `personas/philosopher.txt` while the bot is running and use it immediately with `777 philosopher` — zero downtime.
 
 ---
 
 ## ⚡ Human-Like Simulation Engine
 
-GhostGram is engineered to make AI detection practically impossible:
+The biggest tell of an AI userbot is not *what* it writes — it is *how fast* it writes. A 400-character paragraph appearing after 3 seconds is impossible for a human thumb. The sending pipeline is therefore fully humanized:
 
 ```
-[Incoming Text] ──► [Reading Delay: 40ms/char + Jitter] ──► [Continuous Typing Action]
-                                                                      │
-[Outgoing Text] ◄── [Typing Delay: Non-linear Curve + Pauses] ◄──────┘
+[Incoming Text] ──► [Reading Delay ~40ms/char, capped] ──► [Continuous typing… action]
+                                                                     │
+[Outgoing Text] ◄── [Split Into Bubbles] ◄── [Proportional Typing Delay + Pauses] ◄─┘
 ```
 
-1. **Proportional Reading Delay**: Calculates realistic human reading time before reacting (`base_time = len(text) * 0.04s` with random jitter).
-2. **Persistent `typing...` Status**: Maintains Telegram's native typing action continuously during the entire processing and drafting lifecycle.
-3. **Non-Linear Typing Speed Curve**: Uses `(length ** 0.75) * 0.22` with dynamic pauses on Persian and English punctuation (`,`, `.`, `!`, `؟`, `،`) to simulate human finger movement.
-4. **Anti-AI Formatting Sanitizer**: Strips markdown lists, emojis, HTML tags, and Arabic diacritics that typically give away AI-generated text.
+1. **Proportional reading delay** before the bot even starts typing, so it looks like the message was actually read.
+2. **Length-proportional typing time** on a non-linear curve, with an upper bound of **45 seconds** instead of the old hard 7-second clamp. Short replies stay snappy; long ones take realistically long.
+3. **Random thinking pauses** mid-composition, so the `typing…` indicator flickers the way a real person's does.
+4. **Automatic message segmentation**: replies longer than the threshold are split at sentence boundaries and sent as **separate bubbles**, with a short typing pause between each — exactly how people actually text. Code blocks and stickers are never split.
+5. **Anti-AI formatting sanitizer**: strips markdown lists, emojis, HTML tags, and Arabic diacritics that typically give away AI-generated text.
+
+**Approximate timing:**
+
+| Reply length | Typing time |
+|---|---|
+| ~5 chars | ~1.2 s |
+| ~50 chars | ~15 s |
+| ~150 chars | ~50 s (split into bubbles) |
+| 400+ chars | capped at 45 s per bubble |
+
+Every number above is tunable through `HUMAN_*` environment variables — see the configuration reference.
 
 ---
 
@@ -302,9 +300,9 @@ GhostGram is engineered to make AI detection practically impossible:
 • Instant zero-latency fetch.                                • Survives restarts & sliding window drops.
 ```
 
-- **Short-Term Memory**: Fetches the last 30 messages with formatted sender tags, reply chains, and timestamps. Long messages are truncated at natural sentence boundaries (`MAX_MESSAGE_SEGMENT_CHARS`).
-- **Rolling Long-Term Memory**: Every 30 messages, an asynchronous background Gemini task compresses important conversational facts into `memory_state.json`. Future prompts include this condensed memory.
-- **Memory Wipe (`333`)**: Atomically resets the cutoff timestamp, wiping all short-term and long-term memory for that specific chat.
+- **Short-Term Memory**: the last 30 messages with formatted sender tags, reply chains, and timestamps. Long messages are truncated at natural sentence boundaries (`MAX_MESSAGE_SEGMENT_CHARS`).
+- **Rolling Long-Term Memory**: every 30 messages, an asynchronous background Gemini task compresses important facts into `memory_state.json`. Future prompts include this condensed memory.
+- **Memory Wipe (`333`)**: atomically resets the cutoff timestamp, wiping short-term and long-term memory for that specific chat.
 
 ---
 
@@ -318,22 +316,22 @@ GhostGram is engineered to make AI detection practically impossible:
               ┌───────────────────────┼───────────────────────┐
               ▼                       ▼                       ▼
       [API Key 1 (Primary)]   [API Key 2 (Backup)]   [API Key N (Pool)]
-      • 490 req/day quota     • 490 req/day quota    • 490 req/day quota
-      • 15 RPM limiter        • 15 RPM limiter       • 15 RPM limiter
+      • daily quota guard     • daily quota guard    • daily quota guard
+      • RPM limiter           • RPM limiter          • RPM limiter
       • Circuit Breaker       • Circuit Breaker      • Circuit Breaker
               │                       │                       │
               └───────────────────────┴───────────────────────┘
                                       │
-                         [Strict 15s Per-Key Timeout]
+                         [Strict Per-Key Timeout]
                                       │
-                         [Infinite Backoff Failover]
+                         [Backoff Failover]
 ```
 
-- **Multi-Key Round-Robin**: Supply unlimited Gemini API keys in `apis.txt` or `.env`.
-- **Daily Quota Management**: Tracks daily request counts in `api_usage.json` with a safe ceiling (490/day) below Google's 500 limit.
-- **15 RPM Limiter**: Protects keys against rate-limit bursts.
-- **Circuit Breaker**: If a key fails 3 consecutive times, it is placed in quarantine for 3 hours.
-- **15s Hard Timeout**: Prevents hanging requests by switching to the next available key after 15 seconds.
+- **Multi-Key Round-Robin**: supply unlimited Gemini API keys in `apis.txt` or `.env`.
+- **Per-model limits**: configure with `GEMINI_MODELS="name:rpm:rpd,..."`, falling back to `DEFAULT_MODEL_RPM` / `DEFAULT_MODEL_RPD`.
+- **Daily Quota Management**: daily request counts are tracked in `api_usage.json` with a safe ceiling below Google's limit.
+- **Circuit Breaker**: a key failing 3 consecutive times is quarantined for 3 hours.
+- **Hard Timeout**: prevents hanging requests by switching to the next available key (`GEMINI_TIMEOUT`, and a longer `SEARCH_TIMEOUT` for grounded web search).
 
 ---
 
@@ -349,71 +347,65 @@ Need to erase your presence? Send `999`:
 
 ## 🚀 Quick Start & Installation
 
-### Option A: 1-Click Interactive Setup Wizard (Windows)
-If you are on Windows, simply double-click `setup.bat`. The wizard will prompt you for your Telegram API credentials and Gemini keys, generate your `.env` file, and prepare your project.
+### Option A: Railway (recommended for 24/7)
+
+1. Fork/clone this repo and create a Railway service from it.
+2. Create a **Volume** and mount it at `/app/data` — without it, memory, reminders, and mode state are wiped on every restart.
+3. Run `python3 gen_session_string.py` **on your own machine** and paste the output into the `SESSION_STRING` variable.
+4. Set `API_ID`, `API_HASH`, `GEMINI_API_KEYS`, `OWNER_ID`.
+5. Deploy. The startup log prints the active Pal/Assistant state and which stealth codes are listening.
+
+> [!TIP]
+> If Railway shows **"GitHub Repo not found"** under the connected branch, the Railway GitHub App has lost access to the repo. Go to <https://github.com/settings/installations> → Railway → grant access to this repository, then disconnect/reconnect the source repo and redeploy.
+
+### Option B: 1-Click Interactive Setup Wizard (Windows)
 
 ```powershell
 # Double-click setup.bat or run:
 python setup.py
 ```
 
----
-
-### Option B: Manual / Local Installation
+### Option C: Manual / Local Installation
 
 ```bash
 # 1. Clone repository
-git clone https://github.com/yourusername/ghostgram.git
-cd ghostgram
+git clone https://github.com/parhambepe/ghostali.git
+cd ghostali
 
-# 2. Create virtual environment
+# 2. Create and activate a virtual environment
 python -m venv venv
-
-# 3. Activate virtual environment
 # Windows:
 venv\Scripts\activate
 # Linux/macOS:
 source venv/bin/activate
 
-# 4. Install dependencies
+# 3. Install dependencies
 pip install -r requirements.txt
 
-# 5. Configure environment
+# 4. Configure environment
 cp .env.example .env
 
-# 6. Authenticate with Telegram
+# 5. Authenticate with Telegram
 python login.py
 
-# 7. Start GhostGram
+# 6. Start GhostGram
 python main.py
 ```
 
----
-
-### Option C: Docker & Docker Compose
+### Option D: Docker & Docker Compose
 
 ```bash
-# Build and run container in detached mode
 docker compose up -d --build
-
-# View real-time logs
 docker compose logs -f
 ```
 
----
+### Option E: 1-Click 24/7 Linux VPS Deployment
 
-### Option D: 1-Click 24/7 Linux VPS Deployment
+`deploy.bat` (Windows) and `deploy.sh` (Linux) bundle the project, upload it over SSH/SCP, install dependencies, and configure a persistent `systemd` service.
 
-GhostGram includes automated deployment scripts (`deploy.bat` for Windows and `deploy.sh` for Linux) that bundle your project, upload it over SSH/SCP, install dependencies, and configure a persistent `systemd` service.
-
-1. In `.env`, set your VPS IP and SSH user:
-   ```env
-   VPS_IP=123.45.67.89
-   SSH_USER=root
-   SSH_PORT=22
-   ```
-2. Double-click `deploy.bat`.
-3. The script bundles your project, deploys it to `/opt/ghostgram`, enables `ghostgram.service`, and streams live logs.
+1. In `.env`, set `VPS_IP`, `SSH_USER`, `SSH_PORT`.
+2. Run the deploy script.
+3. The project is deployed to `/opt/ghostgram`, `ghostgram.service` is enabled, and live logs are streamed.
 
 ---
 
@@ -427,21 +419,25 @@ API_ID=12345678
 API_HASH=abcdef0123456789abcdef0123456789
 PHONE_NUMBER=+1234567890
 OWNER_ID=123456789
+PERSONA_NAME=شایان
 
 # =================================================================
 # 🧠 GEMINI API CONFIGURATION (https://aistudio.google.com)
 # =================================================================
 GEMINI_API_KEYS=AIzaSyA...Key1,AIzaSyB...Key2
 MODEL_NAME=gemini-3.5-flash-lite
+# Optional per-model limits: "name:rpm:rpd,name:rpm:rpd"
+GEMINI_MODELS=
+DEFAULT_MODEL_RPM=15
+DEFAULT_MODEL_RPD=200
 SESSION_NAME=ghostgram_session
 
 # =================================================================
 # ☁️ RAILWAY / CLOUD DEPLOYMENT (recommended for 24/7)
 # =================================================================
 # Run ONCE locally:  python3 gen_session_string.py
-# Put the printed string into the SESSION_STRING variable on Railway.
 SESSION_STRING=
-# Railway volume mount point (state files survive restarts)
+# Volume mount point (state files survive restarts)
 DATA_DIR=/app/data
 
 # =================================================================
@@ -466,8 +462,20 @@ GEMINI_TIMEOUT=15
 SEARCH_TIMEOUT=45
 
 # =================================================================
-# ⌨️ HUMAN TYPING SIMULATION
+# ⌨️ HUMANIZED SENDING ENGINE (typing_helper.py)
+# These control how human the bot feels. Increase the delays if
+# contacts still suspect a bot; decrease them if it feels too slow.
 # =================================================================
+HUMAN_MIN_TYPING_DELAY=1.2      # floor for very short replies (seconds)
+HUMAN_MAX_TYPING_DELAY=45.0     # ceiling for very long replies (seconds)
+HUMAN_TYPING_CPS_SCALE=1.0      # >1 types faster, <1 types slower
+HUMAN_READ_DELAY_MAX=9.0        # max simulated reading time before typing
+HUMAN_THINK_PAUSE_CHANCE=0.18   # probability of a mid-typing thinking pause
+HUMAN_SEGMENT_MESSAGES=1        # split long replies into separate bubbles
+HUMAN_SEGMENT_THRESHOLD=180     # split only above this many characters
+HUMAN_SEGMENT_MAX_DELAY=12.0    # max pause between bubbles (seconds)
+
+# Legacy typing knobs (superseded by HUMAN_* above)
 TYPING_SPEED_CPS=18.0
 MIN_TYPING_DELAY=1.5
 MAX_TYPING_DELAY=7.0
@@ -480,11 +488,22 @@ SSH_USER=root
 SSH_PORT=22
 ```
 
-### ☁️ Railway Deployment Checklist
+---
 
-1. Create a **Volume** and attach it to the GhostGram service at `/app/data` — without it, memory, reminders, and Pal state are wiped on every restart.
-2. Set `API_ID`, `API_HASH`, `GEMINI_API_KEYS`, and `OWNER_ID` service variables.
-3. Run `python3 gen_session_string.py` on your own machine and paste the output into the `SESSION_STRING` variable — without it every container restart requires a fresh Telegram login code.
+## 💾 State Files & Migrations
+
+All runtime state lives in `DATA_DIR` (`/app/data` on Railway):
+
+| File | Contents |
+|---|---|
+| `assistant_state.json` | Assistant scope (global flag + per-chat list), mutes, blacklist |
+| `pal_state.json` | Pal Mode chats, personas, auto-engage schedule |
+| `memory_state.json` | Compressed long-term memory per chat |
+| `reminders_state.json` | Pending reminders (survive restarts) |
+| `stickers_state.json` | Taught stickers and their meanings |
+| `api_usage.json` | Daily per-key Gemini usage counters |
+
+State files are **versioned**. When the schema changes, the file is migrated on boot and the change is announced in the log. Migrations always fail *closed* — if in doubt, a mode is turned **off** rather than left silently active.
 
 ---
 
@@ -492,9 +511,6 @@ SSH_PORT=22
 
 > [!CAUTION]
 > **Never publish your `.env`, `apis.txt`, or `*.session` files to public repositories!**
-
-### Safe GitHub Packager
-To export a clean, sanitized release ready for GitHub without leaking your credentials:
 
 ```bat
 prepare_github.bat
@@ -506,6 +522,20 @@ This script automatically:
 - Strips Telegram session files (`*.session`).
 - Replaces personal personas with a clean `example.txt`.
 - Generates `GhostGram_GitHub_Release.zip`.
+
+---
+
+## 🗺️ Roadmap
+
+Ideas under consideration — contributions welcome:
+
+- **Quiet hours / sleep schedule** — the bot goes offline at night instead of answering at 4 AM like a machine.
+- **Presence simulation** — realistic online/offline and "last seen" patterns.
+- **Per-contact personas** — automatically use a formal tone with colleagues and a casual one with friends.
+- **Handover detection** — recognize when a conversation needs the real you and ping your Saved Messages instead of improvising.
+- **Voice replies** — answer voice notes with synthesized voice notes.
+- **Draft-approval mode** — the bot proposes a reply in Saved Messages and only sends it after you approve.
+- **Weekly digest** — an automatic summary of who messaged you and what the assistant answered.
 
 ---
 
