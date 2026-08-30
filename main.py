@@ -88,7 +88,26 @@ async def get_recent_chat_history(chat_id: int, limit: int = None, include_id: b
 async def help_handler(event):
     if not is_owner(event):
         return
-    await event.edit(Text.HELP)
+    text = Text.HELP
+    # Telegram messages are capped at 4096 chars — split into chunks
+    # at line boundaries so the help always renders fully.
+    chunks = []
+    current = ""
+    for line in text.splitlines(keepends=True):
+        if len(current) + len(line) > 4000:
+            chunks.append(current)
+            current = line
+        else:
+            current += line
+    if current:
+        chunks.append(current)
+    try:
+        await event.edit(chunks[0])
+        for chunk in chunks[1:]:
+            await event.reply(chunk)
+    except FloodWaitError as e:
+        await asyncio.sleep(e.seconds + 1)
+        await event.reply(chunks[-1])
 
 # ==========================================================
 # 🤖 COMMAND: روشن کردن رفیق (PAL ON / 777)
