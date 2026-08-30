@@ -91,30 +91,15 @@ async def help_handler(event):
     # Stealth like every other command: delete the 888 message instantly,
     # deliver the help into Saved Messages.
     await safe_delete(event)
-    text = Text.HELP
-    # Telegram messages are capped at 4096 chars — split into chunks
-    # at line boundaries so the help always renders fully.
-    chunks = []
-    current = ""
-    for line in text.splitlines(keepends=True):
-        if len(current) + len(line) > 4000:
-            chunks.append(current)
-            current = line
-        else:
-            current += line
-    if current:
-        chunks.append(current)
     try:
         if notifier.ready:
-            for chunk in chunks:
-                await notifier._send(chunk)  # persistent, no auto-delete
+            await notifier._send(Text.HELP)  # persistent, no auto-delete
         else:
-            for chunk in chunks:
-                await event.reply(chunk)
+            await event.reply(Text.HELP)
     except FloodWaitError as e:
         await asyncio.sleep(e.seconds + 1)
         if notifier.ready:
-            await notifier._send(chunks[-1])
+            await notifier._send(Text.HELP)
 
 # ==========================================================
 # 🤖 COMMAND: روشن کردن رفیق (PAL ON / 777)
